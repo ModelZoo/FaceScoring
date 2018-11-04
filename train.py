@@ -5,6 +5,7 @@ from os import listdir
 from os.path import join
 from PIL import Image
 from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing import image
 
 tf.flags.DEFINE_string('data_dir', './images', help='Data dir')
 tf.flags.DEFINE_float('learning_rate', 0.001, help='Learning Rate')
@@ -13,11 +14,35 @@ tf.flags.DEFINE_integer('early_stop_patience', 500, help='Early Stop Patience')
 tf.flags.DEFINE_bool('checkpoint_restore', False, help='Model restore')
 tf.flags.DEFINE_string('model_class', 'VGGModel', help='Model class name')
 tf.flags.DEFINE_integer('batch_size', 20, help='Batch size')
+tf.flags.DEFINE_integer('enhance_images_number', 100, help='Enhance Images number')
 
 
 class Trainer(BaseTrainer):
+    image_generator = image.ImageDataGenerator(
+        rotation_range=10,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        zoom_range=0.1
+    )
+    
+    def enhance_image(self, image):
+        """
+        generate enhanced image
+        :param image:
+        :return:
+        """
+        image = np.expand_dims(image, axis=0)
+        gen = self.image_generator.flow(image)
+        for i in range(self.flags.enhance_images_number):
+            enhanced_image = next(gen)
+            enhanced_image = np.reshape(enhanced_image, enhanced_image.shape[1:])
+            yield enhanced_image
     
     def prepare_data(self):
+        """
+        prepare data
+        :return:
+        """
         # read data
         x_data, y_data = [], []
         path_data = self.flags.data_dir
@@ -28,6 +53,11 @@ class Trainer(BaseTrainer):
             image_array = np.reshape(np.asarray(image_data, dtype='float32'), [128, 128, 3])
             x_data.append(image_array)
             y_data.append(label)
+            # get enhanced images
+            for image in self.enhance_image(image_array):
+                x_data.append(image)
+                y_data.append(label)
+        
         # to numpy
         x_data, y_data = np.asarray(x_data, dtype=np.float32), np.asarray(y_data, dtype=np.float32)
         print('X Data', x_data.shape, 'Y Data', y_data.shape)
