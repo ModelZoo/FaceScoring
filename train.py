@@ -1,7 +1,6 @@
 import tensorflow as tf
 from model_zoo.trainer import BaseTrainer
 import numpy as np
-import pandas as pd
 from os import listdir
 from os.path import join
 from PIL import Image
@@ -24,7 +23,7 @@ class Trainer(BaseTrainer):
         path_data = self.flags.data_dir
         for image in listdir(path_data):
             image_path = join(path_data, image)
-            label = image.split('-')[0]
+            label = int(image.split('-')[0]) - 1
             image_data = Image.open(image_path)
             image_array = np.reshape(np.asarray(image_data, dtype='float32'), [128, 128, 3])
             x_data.append(image_array)
