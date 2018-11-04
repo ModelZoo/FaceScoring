@@ -13,7 +13,7 @@ tf.flags.DEFINE_integer('epochs', 1000, help='Max epochs')
 tf.flags.DEFINE_integer('early_stop_patience', 500, help='Early stop patience')
 tf.flags.DEFINE_bool('checkpoint_restore', False, help='Model restore')
 tf.flags.DEFINE_string('model_class', 'VGGModel', help='Model class name')
-tf.flags.DEFINE_integer('batch_size', 20, help='Batch size')
+tf.flags.DEFINE_integer('batch_size', 64, help='Batch size')
 tf.flags.DEFINE_integer('enhance_images_number', 100, help='Enhance images number')
 
 
