@@ -46,7 +46,9 @@ class Trainer(BaseTrainer):
         # read data
         x_data, y_data = [], []
         path_data = self.flags.data_dir
-        for image in listdir(path_data):
+        for index, image in enumerate(listdir(path_data)):
+            if index % 20 == 0:
+                print('Processing', index + 1, 'Images')
             image_path = join(path_data, image)
             label = int(image.split('-')[0]) - 1
             image_data = Image.open(image_path)
