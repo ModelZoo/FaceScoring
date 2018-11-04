@@ -8,13 +8,13 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing import image
 
 tf.flags.DEFINE_string('data_dir', './images', help='Data dir')
-tf.flags.DEFINE_float('learning_rate', 0.001, help='Learning Rate')
-tf.flags.DEFINE_integer('epochs', 1000, help='Max Epochs')
-tf.flags.DEFINE_integer('early_stop_patience', 500, help='Early Stop Patience')
+tf.flags.DEFINE_float('learning_rate', 0.001, help='Learning rate')
+tf.flags.DEFINE_integer('epochs', 1000, help='Max epochs')
+tf.flags.DEFINE_integer('early_stop_patience', 500, help='Early stop patience')
 tf.flags.DEFINE_bool('checkpoint_restore', False, help='Model restore')
 tf.flags.DEFINE_string('model_class', 'VGGModel', help='Model class name')
 tf.flags.DEFINE_integer('batch_size', 20, help='Batch size')
-tf.flags.DEFINE_integer('enhance_images_number', 100, help='Enhance Images number')
+tf.flags.DEFINE_integer('enhance_images_number', 100, help='Enhance images number')
 
 
 class Trainer(BaseTrainer):
