@@ -1,3 +1,6 @@
+from tensorflow.python.keras.losses import categorical_crossentropy
+from tensorflow.python.keras.metrics import categorical_accuracy
+
 from model_zoo.model import BaseModel
 import tensorflow as tf
 import numpy as np
@@ -129,8 +132,8 @@ class VGGModel(BaseModel):
     
     def init(self):
         self.compile(optimizer=self.optimizer(),
-                     loss='categorical_crossentropy',
-                     metrics=['accuracy'])
+                     loss=categorical_crossentropy,
+                     metrics=[categorical_accuracy])
     
     def infer(self, test_data, batch_size=None):
         logits = self.predict(test_data)

@@ -35,7 +35,9 @@ class Trainer(BaseTrainer):
         y_data = tf.keras.utils.to_categorical(np.asarray(y_data).astype('float32'), 10)
         print('Len X', len(x_data), 'Len Y', len(y_data))
         # split data
-        x_train, x_eval, y_train, y_eval = train_test_split(x_data, y_data, test_size=0.20, random_state=42)
+        x_train, x_eval, y_train, y_eval = train_test_split(x_data, y_data, test_size=0.15)
+        print('Len X Train', len(x_train), 'Len X Eval', len(x_eval))
+        print('Len Y Train', len(y_train), 'Len Y Eval', len(y_eval))
         return (x_train, y_train), (x_eval, y_eval)
 
 
