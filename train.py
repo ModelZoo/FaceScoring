@@ -14,15 +14,17 @@ tf.flags.DEFINE_integer('early_stop_patience', 500, help='Early stop patience')
 tf.flags.DEFINE_bool('checkpoint_restore', False, help='Model restore')
 tf.flags.DEFINE_string('model_class', 'VGGModel', help='Model class name')
 tf.flags.DEFINE_integer('batch_size', 64, help='Batch size')
-tf.flags.DEFINE_integer('enhance_images_number', 100, help='Enhance images number')
+tf.flags.DEFINE_integer('enhance_images_number', 200, help='Enhance images number')
 
 
 class Trainer(BaseTrainer):
     image_generator = image.ImageDataGenerator(
         rotation_range=10,
-        width_shift_range=0.1,
-        height_shift_range=0.1,
-        zoom_range=0.1
+        width_shift_range=0.15,
+        height_shift_range=0.15,
+        zoom_range=0.15,
+        brightness_range=[-0.3, 0.3],
+        channel_shift_range=0.1,
     )
     
     def enhance_images(self, x_data, y_data):
