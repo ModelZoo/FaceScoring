@@ -1,6 +1,8 @@
-from tensorflow.python.keras.losses import categorical_crossentropy
+from tensorflow.python.keras.losses import categorical_crossentropy, mean_squared_error
 from tensorflow.python.keras.metrics import categorical_accuracy
+# from tensorflow.losses import mean_squared_error
 from tensorflow.losses import mean_pairwise_squared_error
+
 from model_zoo.model import BaseModel
 import tensorflow as tf
 import numpy as np
@@ -78,7 +80,7 @@ class VGGModel(BaseModel):
         self.dense3 = tf.keras.layers.Dense(2 * self.num_features, activation='relu')
         self.drop7 = tf.keras.layers.Dropout(0.5)
         
-        self.dense4 = tf.keras.layers.Dense(10)
+        self.dense4 = tf.keras.layers.Dense(10, activation='softmax')
     
     def call(self, inputs, training=None, mask=None):
         # layer1
@@ -130,18 +132,31 @@ class VGGModel(BaseModel):
     def optimizer(self):
         return tf.train.AdamOptimizer(self.config.get('learning_rate'))
     
+    # def loss(self, y_true, y_pred):
+    #     print('y_true', y_true.shape, 'y_pred', y_pred.shape)
+    #     print('Y_true[0]', y_true[0], 'y_pred[0]', y_pred[0])
+    #     y_true_argmax, y_pred_argmax = tf.argmax(y_true, axis=-1), tf.argmax(y_pred, axis=-1)
+    #     print('y_true_argmax', y_true_argmax.shape, 'y_pred_argmax', y_pred_argmax.shape)
+    #     print('y_true_argmax[0]', y_true_argmax[0], 'y_pred_argmax', y_pred_argmax[0])
+    #     result = tf.reduce_mean(tf.square(y_pred_argmax - y_true_argmax))
+    #     print('Result', result)
+    #     return result
+    
     def loss(self, y_true, y_pred):
-        print('y_true', y_true.shape, 'y_pred', y_pred)
         return mean_pairwise_squared_error(y_true, y_pred)
     
-    # def accuracy(self, y_true, y_pred):
-    #     return 1
-    # def
+    def mse(self, y_true, y_pred):
+        y_true_argmax, y_pred_argmax = tf.argmax(y_true, axis=-1), tf.argmax(y_pred, axis=-1)
+        return mean_squared_error(y_true_argmax, y_pred_argmax)
+    
+    def accuracy(self, y_true, y_pred):
+        y_true_argmax, y_pred_argmax = tf.argmax(y_true, axis=-1), tf.argmax(y_pred, axis=-1)
+        return tf.reduce_mean(tf.cast(tf.equal(y_true_argmax, y_pred_argmax), tf.float32))
     
     def init(self):
         self.compile(optimizer=self.optimizer(),
                      loss=self.loss,
-                     metrics=['mse'])
+                     metrics=[self.mse, self.accuracy])
     
     def infer(self, test_data, batch_size=None):
         logits = self.predict(test_data)
