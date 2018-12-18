@@ -1,8 +1,6 @@
 from tensorflow.python.keras.losses import categorical_crossentropy, mean_squared_error
 from tensorflow.python.keras.metrics import categorical_accuracy
-# from tensorflow.losses import mean_squared_error
 from tensorflow.losses import mean_pairwise_squared_error
-
 from model_zoo.model import BaseModel
 import tensorflow as tf
 import numpy as np
