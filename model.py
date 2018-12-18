@@ -1,6 +1,6 @@
 from tensorflow.python.keras.losses import categorical_crossentropy
 from tensorflow.python.keras.metrics import categorical_accuracy
-
+from tensorflow.losses import mean_pairwise_squared_error
 from model_zoo.model import BaseModel
 import tensorflow as tf
 import numpy as np
@@ -78,7 +78,7 @@ class VGGModel(BaseModel):
         self.dense3 = tf.keras.layers.Dense(2 * self.num_features, activation='relu')
         self.drop7 = tf.keras.layers.Dropout(0.5)
         
-        self.dense4 = tf.keras.layers.Dense(10, activation='softmax')
+        self.dense4 = tf.keras.layers.Dense(10)
     
     def call(self, inputs, training=None, mask=None):
         # layer1
@@ -130,10 +130,18 @@ class VGGModel(BaseModel):
     def optimizer(self):
         return tf.train.AdamOptimizer(self.config.get('learning_rate'))
     
+    def loss(self, y_true, y_pred):
+        print('y_true', y_true.shape, 'y_pred', y_pred)
+        return mean_pairwise_squared_error(y_true, y_pred)
+    
+    # def accuracy(self, y_true, y_pred):
+    #     return 1
+    # def
+    
     def init(self):
         self.compile(optimizer=self.optimizer(),
-                     loss=categorical_crossentropy,
-                     metrics=[categorical_accuracy])
+                     loss=self.loss,
+                     metrics=['mse'])
     
     def infer(self, test_data, batch_size=None):
         logits = self.predict(test_data)
